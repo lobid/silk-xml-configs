@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Silk>
+  <Prefixes>
+    <Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+    <Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#"/>
+    <Prefix id="isbd" namespace="http://iflastandards.info/ns/isbd/elements/"/>
+    <Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#"/>
+    <Prefix id="bibo" namespace="http://purl.org/ontology/bibo/"/>
+    <Prefix id="rdrel" namespace="http://rdvocab.info/RDARelationshipsWEMI/"/>
+    <Prefix id="pg" namespace="http://www.gutenberg.org/rdfterms/"/>
+    <Prefix id="dc" namespace="http://purl.org/dc/elements/1.1/"/>
+    <Prefix id="dcterms" namespace="http://purl.org/dc/terms/"/>
+    <Prefix id="frbr" namespace="http://purl.org/vocab/frbr/core#"/>
+
+  </Prefixes>
+  <DataSources>
+    <DataSource id="lobid" type="sparqlEndpoint">
+      <Param name="endpointURI" value="http://gaia.hbz-nrw.de:8000/sparql/"/>
+    </DataSource>
+    <DataSource id="pg" type="sparqlEndpoint">
+      <Param name="endpointURI" value="http://gaia.hbz-nrw.de:8000/sparql/"/>
+      <Param name="retryCount" value="100"/>
+      <Param name="retryPause" value="400"/>
+    </DataSource>
+  </DataSources>
+  <Interlinks>
+    <Interlink id="workManifested">
+      <LinkType>rdrel:workManifested</LinkType>
+      <SourceDataset dataSource="lobid" var="b">
+        <RestrictTo>
+          ?b rdf:type frbr:manifestation <!-- disabled Manifestation -->
+        </RestrictTo>
+      </SourceDataset>
+      <TargetDataset dataSource="pg" var="a">
+        <RestrictTo>
+		?a rdf:type pg:etext
+        </RestrictTo>
+      </TargetDataset>
+      <LinkageRule>
+        <Aggregate type="max">
+          <Compare metric="equality">
+            <TransformInput function="lowerCase">
+            	<TransformInput function="removeSpecialChars">
+                  <Input path="?a/dc:title"/>
+            	</TransformInput>
+            </TransformInput>
+            <TransformInput function="lowerCase">
+              <Input path="?b/isbd:P1004"/>
+            </TransformInput>
+          </Compare>
+        </Aggregate>
+      </LinkageRule>
+      <Filter/>
+    </Interlink>
+  </Interlinks>
+</Silk>
+
